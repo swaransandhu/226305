@@ -56,5 +56,9 @@ Welche Haarfarbe?
 3 = blond,    
 4 = rot. 
 
-**location**
+**location**  
 Wohnort, codiert als String.
+
+**county**  
+Bundesland, codiert als String.
+
