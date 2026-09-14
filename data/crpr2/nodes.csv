@@ -1,4 +1,4 @@
-id,name,name_first,sex,crpr,age,smoke,phone,tatoo,eyes,hair,location,county
+id,name,name_first,sex,crpr,age,smoke,phone,tattoo,eyes,hair,location,county
 1,1,Charlotte,1,1,2,1,1,2,4,2,Stuttgart,BW
 2,2,Jana,1,1,4,1,2,1,2,3,Ludwigsburg,BW
 3,3,Lena,1,1,2,1,1,1,3,3,Esslingen,BW
