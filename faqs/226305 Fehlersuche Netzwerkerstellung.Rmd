@@ -1,0 +1,65 @@
+---
+title: "226305 Datenbereinigung"
+output: html_document
+date: "2026-10-02"
+---
+
+```{r setup, include=FALSE}
+# Den Setup-Chunk nicht verändern
+knitr::opts_chunk$set(echo = FALSE)
+library(igraph)
+library(tidygraph)
+library(tidyverse)
+library(ggraph)
+```
+
+# Netzwerk einlesen
+
+Wir lesen das Beispielnetzwerk "Students" ein: bitte unbedingt das Codebuch beachten! Alternativ können Sie lokale Dateien über die Import-Funktion oder den Link importieren.
+
+```{r Beispielnetzwerk einlesen}
+
+# edgelist
+el <- read.csv("https://raw.githubusercontent.com/hdm-crpr/226305/master/data/crpr2/edges.csv", header=T, as.is=T, sep = ",")
+
+# Nodelist
+nl <- read.csv("https://raw.githubusercontent.com/hdm-crpr/226305/master/data/crpr2/nodes.csv", header=T, as.is=T, sep = ",")
+
+# erstellt das Netzwerk als tidygraph-Objekt
+s <- tbl_graph(nodes = nl, edges = el, directed = TRUE)
+
+# Netzwerk aufrufen
+s
+```
+
+Fehlersuche beim Erstellen des Netzwerks
+
+### Fehler 1: Duplikate in der Nodelist
+
+Prüft, ob manche Nodes doppelt angelegt wurden. Wenn ja, werden diese angezeigt. Ansonsten NULL, damit ist alles in Ordnung.
+
+```{r Duplikate prüfen Nodelist}
+
+# Auf Duplikate in der Nodelist prüfen
+nl |> # nimm die Nodelist 
+group_by_all() |>  # gruppiere die Nodelist 
+filter(n()>1) |> # filtere die Nodelist 
+ungroup() 
+
+```
+
+### Fehler 2: Edgelist und Nodelist passen nicht zueinander
+
+Wir überprüfen, ob die IDs von Edge- und Nodelist miteinander übereinstimmen
+
+```{r Edgelist mit Nodelist abgleichen}
+
+# Fehlende IDs in der Edgelist
+missing_in_edgelist <- setdiff(nl$ID, unique(c(el$from, el$to))) # Vergleich nl und el
+missing_in_edgelist
+
+# Mit der Ausgabe 0 liegen keine Fehler vor. 
+
+```
+
+Mit der Ausgabe 0 liegen keine Unterschiede zwischen Edge- und Nodelist vor.
