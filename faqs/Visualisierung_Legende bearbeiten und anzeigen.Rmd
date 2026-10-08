@@ -1,0 +1,64 @@
+---
+title: "Legende bearbeiten"
+author: "JK"
+date: "2026-10-08"
+output: html_document
+---
+
+
+```{r}
+library(igraph)
+library(tidygraph)
+library(tidyverse)
+library(ggraph)
+```
+
+
+```{r}
+# edgelist
+el <- 
+read.csv("https://raw.githubusercontent.com/hdm-crpr/226305/master/data/crpr2/edges.csv", 
+header=T, as.is=T, sep = ",")
+# Nodelist
+nl <- 
+read.csv("https://raw.githubusercontent.com/hdm-crpr/226305/refs/heads/master/data/students/nodes.csv", header=T, as.is=T, sep = ",")
+
+# erstellt das Netzwerk als tidygraph-Objekt
+s <- tbl_graph(nodes = nl, edges = el, directed = TRUE)
+
+# Netzwerk aufrufen
+s
+```
+```{r}
+s_female <- s %>%
+  activate(nodes) %>%
+  filter(sex == 1)
+
+
+#Frage: Wie kann man in einem Teilnetzerwerk verschiedenen Knoten Attribute mit unterschiedlichen Farben anzeigen lassen? - Es gibt zwei Versionen
+set.seed(123)
+ggraph(s, layout = "fr")+
+  geom_edge_link(color = "blue", width = 0.3)+
+  geom_node_point(aes(color = sex == 1, size = 5))+ #Hier legen wir fest, dass wir nach der Unterscheidung Mann/Frau suchen, welche in der Nodelist binär codiert wurden. Deshalb macht R schließlich ein Abgleich 1 -> TRUE or FALSE (siehe Zeile 46)
+  scale_color_manual(
+    name = "sex",
+    values = c("TRUE" = "coral", "FALSE" = "steelblue", "NA" = "grey"),# Hier weisen wir den jeweiligen Ergebnissen des Abgleich Farben zu.
+    labels = c("TRUE" = "Frauen", "FALSE" = "Männer", "NA" = "NA") #Hier legen wir schließlich fest, dass in der Legende der Grafik nicht Coral = TRUE steht, sondern decodieren das wieder für die Verständlichkeit.
+  )+
+  geom_node_text(aes(label = ID), repel = TRUE)+
+  labs(title = "Studierendennetzwerk")
+
+set.seed(123)
+ggraph(s, layout = "fr")+
+  geom_edge_link(color = "blue", width = 0.3)+
+  geom_node_point(aes(color = factor(sex)), size = 5)+ # Hier gehen wir anders vor und faktorisieren die Original-Werte. Damit greifen wir auf die Original-Werte zu und haben keine TRUE/FALSE-Abfrage mehr.
+  scale_color_manual(
+    name = "sex",
+    values = c("1" = "coral", "2" = "steelblue"), # Diese Schritte ähneln nun den der Variante 1, nur mit den Original-Werten.
+    labels = c("1" = "Frauen", "2" = "Männer")
+  )+
+  geom_node_text(aes(label = ID), repel = TRUE)+
+  labs(title = "Studierendennetzwerk")
+
+```
+
